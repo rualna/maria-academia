@@ -19,7 +19,7 @@ export default function LoginPage() {
     if (error) {
       alert(error.message)
     } else {
-      alert('Cuenta creada correctamente')
+      alert('Cuenta creada. Revisá tu email y confirmá tu cuenta antes de entrar.')
     }
 
     setLoading(false)

@@ -1,5 +1,6 @@
 import OpenAI from 'openai'
 import { supabaseAdmin } from '../../../lib/supabase-admin'
+import { getPronunciationInstructions, getCommonErrors } from '../../../lib/pronunciation-roadmap'
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -9,6 +10,17 @@ export async function POST(request: Request) {
   try {
     const body = await request.json()
     const { student_id, transcript } = body
+
+    // 41 — Obtener nivel del estudiante para aplicar ruta de pronunciación correcta
+    const { data: student } = await supabaseAdmin
+      .from('students')
+      .select('current_level')
+      .eq('id', student_id)
+      .single()
+
+    const level = student?.current_level || 'A1'
+    const pronunciationInstructions = getPronunciationInstructions(level)
+    const commonErrors = getCommonErrors(level)
 
     if (!student_id || !transcript) {
       return Response.json(
@@ -34,6 +46,14 @@ export async function POST(request: Request) {
           role: 'system',
 content: `
 You are Maria, an English speaking evaluator for Spanish-speaking students.
+Student level: ${level}
+
+PRONUNCIATION INSTRUCTIONS FOR THIS LEVEL:
+${pronunciationInstructions}
+
+COMMON ERRORS TO WATCH FOR AT ${level}:
+${commonErrors.map(e => `- ${e}`).join('\n')}
+
 
 Return ONLY valid JSON with this exact structure:
 {

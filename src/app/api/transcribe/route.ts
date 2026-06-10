@@ -19,6 +19,7 @@ export async function POST(req: Request) {
     const transcription = await openai.audio.transcriptions.create({
       file: audioFile,
       model: 'whisper-1',
+      language: 'en', // programa de inglés: forzar inglés, no auto-detectar (ej. español por acento hispano)
     })
 
     return Response.json({

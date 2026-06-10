@@ -1,0 +1,32 @@
+{
+  "name": "AcademIA — Aprende inglés con IA",
+  "short_name": "AcademIA",
+  "description": "Tu tutora IA de inglés. Habla, practica y progresa todos los días.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#020617",
+  "theme_color": "#10B981",
+  "orientation": "portrait-primary",
+  "icons": [
+    { "src": "/mariaanimada.jpeg", "sizes": "192x192", "type": "image/jpeg" },
+    { "src": "/mariaanimada.jpeg", "sizes": "512x512", "type": "image/jpeg" }
+  ],
+  "categories": ["education", "productivity"],
+  "lang": "es",
+  "shortcuts": [
+    {
+      "name": "María Chat",
+      "short_name": "Chat",
+      "description": "Hablar con María",
+      "url": "/",
+      "icons": [{ "src": "/mariaanimada.jpeg", "sizes": "96x96" }]
+    },
+    {
+      "name": "María Speaking",
+      "short_name": "Speaking",
+      "description": "Practicar speaking",
+      "url": "/speaking",
+      "icons": [{ "src": "/mariaanimada.jpeg", "sizes": "96x96" }]
+    }
+  ]
+}
