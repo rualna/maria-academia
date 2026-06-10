@@ -260,7 +260,7 @@ async function computeFinalScore(studentId: string, scores: any, ctx: any) {
       p_student_id: studentId,
       p_xp: attemptNumber === 1 && globalScore >= 90 ? 300 : 200,
       p_chokis: 50,
-    }).catch(() => null) // si no existe la función no rompe
+    }).then(undefined, () => null) // si no existe la función no rompe
   }
 
   // Generar mensaje de María

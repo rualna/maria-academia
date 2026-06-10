@@ -130,7 +130,7 @@ Devolvé JSON:
       p_student_id: student_id,
       p_xp: 500,
       p_chokis: 100,
-    }).catch(() => null)
+    }).then(undefined, () => null)
   }
 
   return Response.json({ success: true, result })

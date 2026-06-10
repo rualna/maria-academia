@@ -119,7 +119,7 @@ export async function POST(request: Request) {
       p_student_id: student_id,
       p_xp: xp_earned,
       p_chokis: 0,
-    }).catch(() => null)
+    }).then(undefined, () => null)
   }
 
   return Response.json({ success: true, xp_earned })

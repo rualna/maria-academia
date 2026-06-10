@@ -270,7 +270,7 @@ export default function SpeakingPage() {
                   onMouseUp={stopRecording}
                   onTouchStart={startRecording}
                   onTouchEnd={stopRecording}
-                  disabled={phase === 'evaluating'}
+                  disabled={(phase as Phase) === 'evaluating'}
                   className={`relative flex flex-col items-center transition-all select-none ${
                     phase === 'recording' ? 'scale-110' : 'hover:scale-105'
                   }`}

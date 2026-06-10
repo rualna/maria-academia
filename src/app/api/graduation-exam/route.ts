@@ -151,7 +151,7 @@ Devolvé JSON:
       p_student_id: student_id,
       p_xp: 1000,
       p_chokis: 500,
-    }).catch(() => null)
+    }).then(undefined, () => null)
 
     // Actualizar nivel final
     await supabaseAdmin
