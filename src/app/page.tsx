@@ -3,6 +3,12 @@ import { supabase } from '@/lib/supabase'
 
 import { useEffect, useRef, useState } from 'react'
 
+// Header con el JWT del usuario para autenticar las llamadas a la API
+async function authHeader(): Promise<Record<string, string>> {
+  const { data: { session } } = await supabase.auth.getSession()
+  return session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {}
+}
+
 type ChatMessage = {
   role: 'user' | 'maria'
   content: string
@@ -32,7 +38,7 @@ const [mission, setMission] = useState<any>(null)
       // en vez de tragarnos el error en silencio (antes el 404 pasaba inadvertido).
       const res = await fetch('/api/create-student', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...(await authHeader()) },
         body: JSON.stringify({
           id: data.user.id,
           email: data.user.email,
@@ -57,7 +63,7 @@ const [mission, setMission] = useState<any>(null)
   }, [chat, loading])
 
   async function loadMission() {
-    const res = await fetch('/api/missions')
+    const res = await fetch('/api/missions', { headers: await authHeader() })
     const data = await res.json()
 
     if (data.success) {
@@ -66,7 +72,7 @@ const [mission, setMission] = useState<any>(null)
   }
 
   async function loadHistory(studentId: string) {
-    const res = await fetch(`/api/chat-history?student_id=${studentId}`)
+    const res = await fetch(`/api/chat-history?student_id=${studentId}`, { headers: await authHeader() })
     const data = await res.json()
 
     if (data.success) {
@@ -98,7 +104,7 @@ const [mission, setMission] = useState<any>(null)
 
     const res = await fetch('/api/maria', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', ...(await authHeader()) },
       body: JSON.stringify({ student_id: studentId, message: userMessage }),
     })
 

@@ -1,4 +1,5 @@
 import OpenAI from 'openai'
+import { getAuthUser, unauthorized } from '@/lib/auth'
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -6,6 +7,9 @@ const openai = new OpenAI({
 
 export async function POST(req: Request) {
   try {
+    const user = await getAuthUser(req)
+    if (!user) return unauthorized()
+
     const formData = await req.formData()
     const audioFile = formData.get('audio') as File
 

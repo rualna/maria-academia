@@ -1,4 +1,5 @@
 import { supabaseAdmin } from '@/lib/supabase-admin'
+import { getAuthUser, unauthorized } from '@/lib/auth'
 
 // ============================================================
 // POST /api/create-student
@@ -8,11 +9,13 @@ import { supabaseAdmin } from '@/lib/supabase-admin'
 // ============================================================
 export async function POST(request: Request) {
   try {
-    const body = await request.json()
-    const { id, email } = body
+    const user = await getAuthUser(request)
+    if (!user) return unauthorized()
+    const id = user.id
+    const email = user.email
 
-    if (!id || !email) {
-      return Response.json({ success: false, error: 'id and email required' }, { status: 400 })
+    if (!email) {
+      return Response.json({ success: false, error: 'email required' }, { status: 400 })
     }
 
     // ¿Ya existe? → idempotente, no duplica

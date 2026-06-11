@@ -3,6 +3,12 @@
 import { supabase } from '@/lib/supabase'
 import { useEffect, useRef, useState } from 'react'
 
+// Header con el JWT del usuario para autenticar las llamadas a la API
+async function authHeader(): Promise<Record<string, string>> {
+  const { data: { session } } = await supabase.auth.getSession()
+  return session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {}
+}
+
 type Phase = 'ready' | 'recording' | 'evaluating' | 'feedback' | 'complete'
 
 export default function SpeakingPage() {
@@ -37,13 +43,13 @@ export default function SpeakingPage() {
   }, [])
 
   async function loadMission(id: string) {
-    const res = await fetch(`/api/missions?student_id=${id}`)
+    const res = await fetch(`/api/missions?student_id=${id}`, { headers: await authHeader() })
     const data = await res.json()
     if (data.success) setMission(data.mission)
   }
 
   async function loadProgress(id: string) {
-    const res = await fetch(`/api/speaking-progress?student_id=${id}`)
+    const res = await fetch(`/api/speaking-progress?student_id=${id}`, { headers: await authHeader() })
     const data = await res.json()
     if (data.success) setProgress(data.progress)
   }
@@ -71,6 +77,7 @@ export default function SpeakingPage() {
 
       const transcribeRes = await fetch('/api/transcribe', {
         method: 'POST',
+        headers: await authHeader(),
         body: formData,
       })
       const transcribeData = await transcribeRes.json()
@@ -82,7 +89,7 @@ export default function SpeakingPage() {
 
       const feedbackRes = await fetch('/api/speaking-feedback', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...(await authHeader()) },
         body: JSON.stringify({
           student_id: studentId,
           transcript: transcribeData.transcript,

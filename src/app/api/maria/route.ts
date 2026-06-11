@@ -8,6 +8,7 @@ import { buildLanguageSession } from '@/lib/prompt-localization'
 import type { LanguageCode } from '@/lib/language-config'
 import { buildMemorySummary } from '@/lib/ai-memory'
 import { callWithFallback } from '@/lib/ai-orchestrator'
+import { getAuthUser, unauthorized } from '@/lib/auth'
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
 
@@ -61,10 +62,13 @@ function buildLearningAdaptationsPrompt(adaptations: any): string {
 
 export async function POST(request: Request) {
   try {
-    const { student_id, message } = await request.json()
+    const user = await getAuthUser(request)
+    if (!user) return unauthorized()
+    const student_id = user.id
 
-    if (!student_id || !message) {
-      return Response.json({ success: false, error: 'student_id and message required' }, { status: 400 })
+    const { message } = await request.json()
+    if (!message) {
+      return Response.json({ success: false, error: 'message required' }, { status: 400 })
     }
 
     // Construir contexto completo del estudiante

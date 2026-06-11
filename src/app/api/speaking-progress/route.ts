@@ -1,4 +1,5 @@
 import { supabaseAdmin } from '@/lib/supabase-admin'
+import { getAuthUser, unauthorized } from '@/lib/auth'
 
 function calculateStreak(attempts: any[]) {
   if (!attempts.length) return 0
@@ -33,19 +34,9 @@ function calculateStreak(attempts: any[]) {
 }
 
 export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url)
-
-  const student_id = searchParams.get('student_id')
-
-  if (!student_id) {
-    return Response.json(
-      {
-        success: false,
-        error: 'student_id is required',
-      },
-      { status: 400 }
-    )
-  }
+  const user = await getAuthUser(request)
+  if (!user) return unauthorized()
+  const student_id = user.id
 
   const { data, error } = await supabaseAdmin
     .from('student_speaking_attempts')

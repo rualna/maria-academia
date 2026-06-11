@@ -1,4 +1,5 @@
 import OpenAI from 'openai'
+import { getAuthUser, unauthorized } from '@/lib/auth'
 import { supabaseAdmin } from '../../../lib/supabase-admin'
 import { getPronunciationInstructions, getCommonErrors } from '../../../lib/pronunciation-roadmap'
 
@@ -8,8 +9,12 @@ const openai = new OpenAI({
 
 export async function POST(request: Request) {
   try {
+    const user = await getAuthUser(request)
+    if (!user) return unauthorized()
+    const student_id = user.id
+
     const body = await request.json()
-    const { student_id, transcript } = body
+    const { transcript } = body
 
     // 41 — Obtener nivel del estudiante para aplicar ruta de pronunciación correcta
     const { data: student } = await supabaseAdmin

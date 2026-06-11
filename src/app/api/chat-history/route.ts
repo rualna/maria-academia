@@ -1,12 +1,10 @@
 import { supabaseAdmin as supabase } from '@/lib/supabase-admin'
+import { getAuthUser, unauthorized } from '@/lib/auth'
 
 export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url)
-  const student_id = searchParams.get('student_id')
-
-  if (!student_id) {
-    return Response.json({ success: false, error: 'student_id is required' }, { status: 400 })
-  }
+  const user = await getAuthUser(request)
+  if (!user) return unauthorized()
+  const student_id = user.id
 
   const { data, error } = await supabase
     .from('student_events')

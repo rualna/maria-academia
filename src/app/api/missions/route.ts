@@ -1,9 +1,11 @@
 import { supabaseAdmin } from '@/lib/supabase-admin'
 import { getCurrentWeek, getPhrasesForWeek } from '@/lib/maria-context'
+import { getAuthUser, unauthorized } from '@/lib/auth'
 
 export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url)
-  const student_id = searchParams.get('student_id')
+  const user = await getAuthUser(request)
+  if (!user) return unauthorized()
+  const student_id = user.id
 
   let level = 'A1'
   let currentWeek = 1
