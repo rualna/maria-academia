@@ -152,9 +152,10 @@ export default function SpeakingPage() {
 
         {/* Header */}
         <div className="flex justify-between mb-6">
-          <a href="/" className="text-emerald-400 underline">
-            María Chat
-          </a>
+          <div className="flex gap-4">
+            <a href="/" className="text-slate-300 hover:text-white underline">🏠 Inicio</a>
+            <a href="/chat" className="text-emerald-400 hover:text-emerald-300 underline">María Chat</a>
+          </div>
           <button
             onClick={async () => {
               await supabase.auth.signOut()
