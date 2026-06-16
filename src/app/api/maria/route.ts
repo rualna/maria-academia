@@ -9,6 +9,7 @@ import type { LanguageCode } from '@/lib/language-config'
 import { buildMemorySummary } from '@/lib/ai-memory'
 import { callWithFallback } from '@/lib/ai-orchestrator'
 import { getAuthUser, unauthorized } from '@/lib/auth'
+import { awardRewards } from '@/lib/rewards'
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
 
@@ -181,7 +182,10 @@ Si el estudiante pregunta algo que NO está en esta lista:
       },
     }])
 
-    return Response.json({ success: true, reply })
+    // Otorgar XP por chatear (responsabilidad → migaja, con tope diario anti-farm)
+    const rewards = await awardRewards(student_id, 'chat')
+
+    return Response.json({ success: true, reply, rewards })
   } catch (error: any) {
     return Response.json({ success: false, error: error.message }, { status: 500 })
   }

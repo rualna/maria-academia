@@ -1,5 +1,6 @@
 import OpenAI from 'openai'
 import { getAuthUser, unauthorized } from '@/lib/auth'
+import { awardRewards } from '@/lib/rewards'
 import { supabaseAdmin } from '../../../lib/supabase-admin'
 import { getPronunciationInstructions, getCommonErrors } from '../../../lib/pronunciation-roadmap'
 
@@ -163,9 +164,13 @@ The corrected_version must stay as close as possible to the student's
       )
     }
 
+    // Otorgar XP/Chokis por la práctica (Hábito + Logro si el score es alto, con tope diario)
+    const rewards = await awardRewards(student_id, 'speaking', { score: feedback.score })
+
     return Response.json({
       success: true,
       feedback,
+      rewards,
     })
   } catch (error: any) {
     return Response.json(
